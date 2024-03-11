@@ -25,6 +25,9 @@
   }
 
   onMount(async () => {
+    let randomID = Math.floor(Math.random() * (999 - 100 + 1)) + 100;
+    generatedStickerUrl = `https://picsum.photos/id/${randomID}/200`;
+
     // Fetch image history from Firestore on component mount
   });
 </script>

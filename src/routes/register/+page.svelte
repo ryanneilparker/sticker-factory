@@ -1,6 +1,7 @@
 <script>
   import { app, db } from "$lib/scripts/firebase";
   import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+  import { goto } from "$app/navigation";
 
   let email = "";
   let password = "";
@@ -14,9 +15,10 @@
         email,
         password
       );
+      localStorage.setItem("uid", userCredential.user.uid);
       console.log("User created:", userCredential.user);
       errorMessage = "";
-      window.location.href = "/prompt";
+      goto("/protected/prompt");
     } catch (error) {
       console.error("Error creating user:", error);
       errorMessage = error.message;

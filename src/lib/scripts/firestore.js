@@ -7,8 +7,6 @@ export async function saveImageToStorage(imageUrl) {
   const storage = getStorage(app);
   const imageRef = ref(storage, filename);
 
-  console.log(filename);
-
   // Fetch the image data using the data URL and convert it to a Blob
   const blob = await fetch(imageUrl).then((response) => response.blob());
 
