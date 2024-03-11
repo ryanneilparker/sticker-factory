@@ -1,5 +1,5 @@
 <script>
-  import { app, db } from "$lib/firebase";
+  import { app, db } from "$lib/scripts/firebase";
   import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
   let email = "";
