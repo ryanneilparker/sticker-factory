@@ -1,6 +1,6 @@
 <script>
   import { app, db } from "$lib/firebase";
-  import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+  import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
   let email = "";
   let password = "";
@@ -9,16 +9,16 @@
   const handleSubmit = async () => {
     try {
       const auth = app ? getAuth(app) : null;
-      const userCredential = await signInWithEmailAndPassword(
+      const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
-      console.log("User signed in:", userCredential.user);
+      console.log("User created:", userCredential.user);
       errorMessage = "";
       window.location.href = "/prompt";
     } catch (error) {
-      console.error("Error signing in:", error);
+      console.error("Error creating user:", error);
       errorMessage = error.message;
     }
   };
@@ -29,7 +29,7 @@
   <input type="email" id="email" bind:value={email} required />
   <label for="password">Password:</label>
   <input type="password" id="password" bind:value={password} required />
-  <button type="submit">Sign In</button>
+  <button type="submit">Register</button>
   {#if errorMessage}
     <p style="color: red;">{errorMessage}</p>
   {/if}
