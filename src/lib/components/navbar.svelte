@@ -9,6 +9,8 @@
     try {
       await signOut(auth);
       localStorage.removeItem("uid");
+      localStorage.removeItem("stickerHistory");
+      localStorage.removeItem("cartItems");
       console.log("User logged out");
       isLoggedIn.update(() => false);
       goto("/login");
@@ -19,8 +21,9 @@
 </script>
 
 <ul>
+  <li><a href="/">Landing Page</a></li>
   <li><a href="/protected/prompt">Prompt Page</a></li>
-  <li><a href="/orders">Orders Page</a></li>
+  <li><a href="/protected/orders">Orders Page</a></li>
   <li>
     <a on:click|preventDefault={handleLogout} href="/signout">Sign Out</a>
   </li>
