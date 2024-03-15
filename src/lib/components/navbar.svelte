@@ -11,9 +11,9 @@
       localStorage.removeItem("uid");
       localStorage.removeItem("stickerHistory");
       localStorage.removeItem("cartItems");
-      console.log("User logged out");
       isLoggedIn.update(() => false);
-      goto("/login");
+      goto("/auth/login");
+      console.log("User has been logged out successfully!");
     } catch (error) {
       console.error("Error loggin out:", error);
     }

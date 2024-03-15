@@ -1,6 +1,6 @@
 <script>
-  import { app, db } from "$lib/scripts/firebase";
   import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+  import { app } from "$lib/scripts/firebase";
   import { goto } from "$app/navigation";
 
   let email = "";
@@ -16,7 +16,7 @@
         password
       );
       localStorage.setItem("uid", userCredential.user.uid);
-      console.log("User signed in:", userCredential.user);
+      console.log("User signed in:", userCredential.user.uid);
       errorMessage = "";
       goto("/protected/prompt");
     } catch (error) {
