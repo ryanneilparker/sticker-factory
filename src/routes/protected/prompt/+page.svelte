@@ -1,9 +1,7 @@
 <script>
   import { onMount } from "svelte";
-
   import { saveImageToStorage } from "$lib/scripts/firestore";
   import { getTopTenStickers } from "$lib/scripts/firestore";
-
   import { stickerHistoryStore } from "$lib/stores/stickerHistoryStore";
   import { cartItemsStore } from "$lib/stores/cartItemsStore";
 
@@ -23,20 +21,13 @@
 
   function updateStickerHistory(generatedStickerUrl) {
     stickerHistoryStore.update((history) => [...history, generatedStickerUrl]);
-    localStorage.setItem(
-      "stickerHistory",
-      JSON.stringify($stickerHistoryStore)
-    );
+    localStorage.setItem("stickerHistory", JSON.stringify($stickerHistoryStore));
   }
 
   async function loadStickerHistory() {
-    const cloudStickerHistory = await getTopTenStickers(
-      localStorage.getItem("uid")
-    );
+    const cloudStickerHistory = await getTopTenStickers(localStorage.getItem("uid"));
     const localStickerHistory = localStorage.getItem("stickerHistory");
-    let stickerHistory = localStickerHistory
-      ? JSON.parse(localStickerHistory)
-      : [];
+    let stickerHistory = localStickerHistory ? JSON.parse(localStickerHistory) : [];
     if (stickerHistory.length == 0) {
       stickerHistory = stickerHistory.concat(cloudStickerHistory);
     }
@@ -45,8 +36,7 @@
   }
 
   function addToCart() {
-    const lastStickerUrl =
-      $stickerHistoryStore[$stickerHistoryStore.length - 1];
+    const lastStickerUrl = $stickerHistoryStore[$stickerHistoryStore.length - 1];
     cartItemsStore.update((history) => [...history, lastStickerUrl]);
     localStorage.setItem("cartItems", JSON.stringify($cartItemsStore));
   }

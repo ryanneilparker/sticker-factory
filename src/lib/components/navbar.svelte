@@ -15,7 +15,7 @@
       goto("/auth/login");
       console.log("User has been logged out successfully!");
     } catch (error) {
-      console.error("Error loggin out:", error);
+      console.error("Error logging out:", error);
     }
   };
 </script>

@@ -1,12 +1,9 @@
 <script>
   import { onMount } from "svelte";
-  import { getAuth, onAuthStateChanged } from "firebase/auth";
-
   import { goto } from "$app/navigation";
-
+  import { getAuth, onAuthStateChanged } from "firebase/auth";
   import { isLoggedIn } from "$lib/stores/authStore";
-
-  import Navbar from "../../lib/components/navbar.svelte";
+  import Navbar from "$lib/components/navbar.svelte";
 
   onMount(() => {
     const auth = getAuth();

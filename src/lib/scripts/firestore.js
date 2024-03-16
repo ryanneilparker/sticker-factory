@@ -1,20 +1,13 @@
 import { getStorage, ref, uploadBytes } from "firebase/storage";
-import { app, db } from "$lib/scripts/firebase";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  where,
-  orderBy,
-  limit,
-  query,
-} from "firebase/firestore";
+import { getFirestore, collection, addDoc, getDocs, where, orderBy, limit, query } from "firebase/firestore";
+import { app } from "$lib/scripts/firebase";
 
 export async function saveImageToStorage(imageUrl, prompt) {
   const filename = Math.random().toString(36).substring(2, 15) + ".png";
   const storage = getStorage(app);
   const imageRef = ref(storage, filename);
 
+  // fetch image and convert to byte blob
   const blob = await fetch(imageUrl).then((response) => response.blob());
 
   try {
@@ -28,6 +21,7 @@ export async function saveImageToStorage(imageUrl, prompt) {
 }
 
 async function saveImageUrlToFirestore(imageUrl, prompt) {
+  const db = getFirestore(app);
   const imageRef = collection(db, "generatedStickers");
   try {
     await addDoc(imageRef, {
@@ -36,7 +30,7 @@ async function saveImageUrlToFirestore(imageUrl, prompt) {
       prompt: prompt,
       creator: localStorage.getItem("uid"),
     });
-    console.log("Sticker document successfully created!");
+    console.log("Sticker document created successfully!");
   } catch {
     console.error("Error creating sticker document:", error);
   }
@@ -44,14 +38,7 @@ async function saveImageUrlToFirestore(imageUrl, prompt) {
 
 export async function getTopTenStickers(userUid) {
   const stickersRef = collection(db, "generatedStickers");
-
-  const stickerQuery = query(
-    stickersRef,
-    where("creator", "==", userUid),
-    orderBy("timestamp", "desc"),
-    limit(10)
-  );
-
+  const stickerQuery = query(stickersRef, where("creator", "==", userUid), orderBy("timestamp", "desc"), limit(10));
   const snapshot = await getDocs(stickerQuery);
 
   let stickerUrl = "";
@@ -59,9 +46,7 @@ export async function getTopTenStickers(userUid) {
   let cloudStickerHistory = [];
   snapshot.forEach((doc) => {
     stickerUrl = doc.data().url;
-    storageUrl =
-      "https://sticker-factory-411909.appspot.com.storage.googleapis.com/" +
-      stickerUrl;
+    storageUrl = "https://sticker-factory-411909.appspot.com.storage.googleapis.com/" + stickerUrl;
     cloudStickerHistory.push(storageUrl);
   });
 

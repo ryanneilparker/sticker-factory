@@ -1,7 +1,7 @@
 <script>
-  import { app } from "$lib/scripts/firebase";
   import { goto } from "$app/navigation";
   import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+  import { app } from "$lib/scripts/firebase";
 
   let email = "";
   let password = "";
@@ -10,11 +10,7 @@
   const handleSubmit = async () => {
     try {
       const auth = app ? getAuth(app) : null;
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       localStorage.setItem("uid", userCredential.user.uid);
       console.log("User created:", userCredential.user.uid);
       errorMessage = "";

@@ -1,7 +1,7 @@
 <script>
+  import { goto } from "$app/navigation";
   import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
   import { app } from "$lib/scripts/firebase";
-  import { goto } from "$app/navigation";
 
   let email = "";
   let password = "";
@@ -10,13 +10,9 @@
   const handleSubmit = async () => {
     try {
       const auth = app ? getAuth(app) : null;
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
       localStorage.setItem("uid", userCredential.user.uid);
-      console.log("User signed in:", userCredential.user.uid);
+      console.log("User signed in: ", userCredential.user.uid);
       errorMessage = "";
       goto("/protected/prompt");
     } catch (error) {
