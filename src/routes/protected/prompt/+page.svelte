@@ -15,6 +15,7 @@
     let randomID = Math.floor(Math.random() * (999 - 100 + 1)) + 100;
     generatedStickerUrl = `https://picsum.photos/id/${randomID}/200`;
 
+    isHistoryDrawerOpen = false;
     updateStickerHistory(generatedStickerUrl);
     saveImageToStorage(generatedStickerUrl, prompt);
   }
@@ -39,6 +40,7 @@
     const lastStickerUrl = $stickerHistoryStore[$stickerHistoryStore.length - 1];
     cartItemsStore.update((history) => [...history, lastStickerUrl]);
     localStorage.setItem("cartItems", JSON.stringify($cartItemsStore));
+    isCartDrawerOpen = true;
   }
 
   function loadCartItems() {
@@ -86,6 +88,7 @@
     {#each $cartItemsStore as item}
       <img src={item} alt="Item in Cart" />
     {/each}
+    <a href="/protected/orders">Checkout</a>
   </div>
 </div>
 
