@@ -2,6 +2,8 @@ import { getStorage, ref, uploadBytes } from "firebase/storage";
 import { getFirestore, collection, addDoc, getDocs, where, orderBy, limit, query } from "firebase/firestore";
 import { app } from "$lib/scripts/firebase";
 
+const db = getFirestore(app);
+
 export async function saveImageToStorage(imageUrl, prompt) {
   const filename = Math.random().toString(36).substring(2, 15) + ".png";
   const storage = getStorage(app);
@@ -21,7 +23,6 @@ export async function saveImageToStorage(imageUrl, prompt) {
 }
 
 async function saveImageUrlToFirestore(imageUrl, prompt) {
-  const db = getFirestore(app);
   const imageRef = collection(db, "generatedStickers");
   try {
     await addDoc(imageRef, {
