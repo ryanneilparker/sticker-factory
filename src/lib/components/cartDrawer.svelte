@@ -1,7 +1,7 @@
 <script>
   export let isCartDrawerOpen;
   import { cartItemsStore } from "$lib/stores/cartItemsStore";
-  import PayfastForm from "$lib/components/payfastForm.svelte";
+  // import PayfastForm from "$lib/components/payfastForm.svelte";
 </script>
 
 <div class="cart-drawer {isCartDrawerOpen ? 'open' : ''}">
@@ -10,7 +10,7 @@
     <img src={item} alt="Item in Cart" />
   {/each}
 
-  <PayfastForm />
+  <!-- <PayfastForm /> -->
 </div>
 
 <style>
