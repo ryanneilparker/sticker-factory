@@ -11,18 +11,20 @@
   import { cartItemsStore } from "$lib/stores/cartItemsStore";
 
   let prompt = "";
-  let generatedStickerUrl = "";
+  let focusedStickerUrl = "";
   let isHistoryDrawerOpen = false;
   let isCartDrawerOpen = false;
 
   async function generateSticker(prompt) {
     //dev: to be replaced by actual gen-ai api
     const testImageUrl = await testImageGenerator();
+    focusedStickerUrl = testImageUrl;
 
     try {
       const imageRef = await uploadImageToCloudStorage(testImageUrl);
       const stickerData = await saveStickerToFirestore(imageRef, prompt);
       updateStickerHistory(stickerData);
+      isHistoryDrawerOpen = false;
     } catch (error) {
       console.error("Error generating sticker:", error);
     }
@@ -62,7 +64,7 @@
 
   onMount(() => {
     // dev: placeholder image
-    generatedStickerUrl = `https://picsum.photos/id/420/200`;
+    focusedStickerUrl = `https://picsum.photos/id/420/200`;
 
     loadStickerHistory();
     loadCartItems();
@@ -70,17 +72,18 @@
 </script>
 
 <div class="sticker-generator">
-  <img src={generatedStickerUrl} alt="Generated sticker" />
+  <span>
+    <input type="text" placeholder="Enter a prompt..." bind:value={prompt} required />
+    <button on:click={generateSticker(prompt)}>Generate Sticker</button>
+  </span>
+
+  <img src={focusedStickerUrl} alt="Generated sticker" />
 
   <button on:click={() => (isHistoryDrawerOpen = !isHistoryDrawerOpen)}>
     {isHistoryDrawerOpen ? "Close History" : "Show History"}
   </button>
 
   <HistoryDrawer bind:isHistoryDrawerOpen />
-
-  <input type="text" placeholder="Enter a prompt..." bind:value={prompt} required />
-
-  <button on:click={generateSticker(prompt)}>Generate Sticker</button>
 
   <button on:click={addToCart}>Add to Cart</button>
 

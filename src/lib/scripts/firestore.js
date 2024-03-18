@@ -42,18 +42,24 @@ export async function getStickersFromFirestore() {
   const userUid = localStorage.getItem("uid");
   const stickersRef = collection(db, "stickers");
   const stickerQuery = query(stickersRef, where("creator", "==", userUid), orderBy("timestamp", "desc"), limit(5));
-  const snapshot = await getDocs(stickerQuery);
-  let stickers = [];
 
-  snapshot.forEach((doc) => {
-    const stickerData = {
-      prompt: doc.data().prompt,
-      creator: doc.data().creator,
-      timestamp: doc.data().timestamp,
-      uri: doc.data().uri,
-    };
-    stickers.push(stickerData);
-  });
+  try {
+    const snapshot = await getDocs(stickerQuery);
+    let stickers = [];
 
-  return stickers.reverse;
+    snapshot.forEach((doc) => {
+      const stickerData = {
+        prompt: doc.data().prompt,
+        creator: doc.data().creator,
+        timestamp: doc.data().timestamp,
+        uri: doc.data().uri,
+      };
+      stickers.push(stickerData);
+    });
+
+    console.log("Sticker history loaded from firestore successfully!");
+    return stickers.reverse();
+  } catch (error) {
+    console.error("Error loading sticker history from firestore:", error);
+  }
 }

@@ -6,7 +6,7 @@
 
 <div class="history-drawer {isHistoryDrawerOpen ? 'open' : ''}">
   <h2>Sticker History</h2>
-  {#each $stickerHistory as sticker}
+  {#each $stickerHistory.slice().reverse() as sticker}
     <HistoryItem {sticker} />
   {/each}
 </div>

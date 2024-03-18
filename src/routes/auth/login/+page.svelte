@@ -12,7 +12,7 @@
       const auth = app ? getAuth(app) : null;
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       localStorage.setItem("uid", userCredential.user.uid);
-      console.log("User signed in: ", userCredential.user.uid);
+      console.log("User: " + userCredential.user.uid + " signed in successfully!");
       errorMessage = "";
       goto("/protected/prompt");
     } catch (error) {
