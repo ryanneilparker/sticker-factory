@@ -4,10 +4,10 @@
   import HistoryDrawer from "$lib/components/historyDrawer.svelte";
   import CartDrawer from "$lib/components/cartDrawer.svelte";
   // Scripts
-  import { saveImageToStorage } from "$lib/scripts/firestore";
-  import { getTopTenStickers } from "$lib/scripts/firestore";
+  import { testImageGenerator } from "$lib/scripts/genai";
+  import { uploadImageToCloudStorage, saveStickerToFirestore, getStickersFromFirestore } from "$lib/scripts/firestore";
   // Stores
-  import { stickerHistoryStore } from "$lib/stores/stickerHistoryStore";
+  import { stickerHistory } from "$lib/stores/stickerHistory";
   import { cartItemsStore } from "$lib/stores/cartItemsStore";
 
   let prompt = "";
@@ -15,34 +15,39 @@
   let isHistoryDrawerOpen = false;
   let isCartDrawerOpen = false;
 
-  async function generateSticker() {
-    //dev: placeholder for api call
-    let randomID = Math.floor(Math.random() * (999 - 100 + 1)) + 100;
-    generatedStickerUrl = `https://picsum.photos/id/${randomID}/200`;
+  async function generateSticker(prompt) {
+    //dev: to be replaced by actual gen-ai api
+    const testImageUrl = await testImageGenerator();
 
-    isHistoryDrawerOpen = false;
-    updateStickerHistory(generatedStickerUrl);
-    saveImageToStorage(generatedStickerUrl, prompt);
+    try {
+      const imageRef = await uploadImageToCloudStorage(testImageUrl);
+      const stickerData = await saveStickerToFirestore(imageRef, prompt);
+      updateStickerHistory(stickerData);
+    } catch (error) {
+      console.error("Error generating sticker:", error);
+    }
   }
 
-  function updateStickerHistory(generatedStickerUrl) {
-    stickerHistoryStore.update((history) => [...history, generatedStickerUrl]);
-    localStorage.setItem("stickerHistory", JSON.stringify($stickerHistoryStore));
+  function updateStickerHistory(stickerData) {
+    try {
+      stickerHistory.update((history) => [...history, stickerData]);
+      localStorage.setItem("stickerHistory", JSON.stringify($stickerHistory));
+      console.log("Sticker saved to local storage successfully!");
+    } catch (error) {
+      console.error("Error saving sticker to local storage:", error);
+    }
   }
 
   async function loadStickerHistory() {
-    const cloudStickerHistory = await getTopTenStickers(localStorage.getItem("uid"));
-    const localStickerHistory = localStorage.getItem("stickerHistory");
-    let stickerHistory = localStickerHistory ? JSON.parse(localStickerHistory) : [];
-    if (stickerHistory.length == 0) {
-      stickerHistory = stickerHistory.concat(cloudStickerHistory);
-    }
-    stickerHistoryStore.update(() => stickerHistory);
-    localStorage.setItem("stickerHistory", JSON.stringify(stickerHistory));
+    //todo: load from local storage to avoid network calls
+    const stickerHistoryStore = await getStickersFromFirestore();
+
+    stickerHistory.update(() => stickerHistoryStore);
+    localStorage.setItem("stickerHistory", JSON.stringify(stickerHistoryStore));
   }
 
   function addToCart() {
-    const lastStickerUrl = $stickerHistoryStore[$stickerHistoryStore.length - 1];
+    const lastStickerUrl = $stickerHistory[$stickerHistory.length - 1];
     cartItemsStore.update((history) => [...history, lastStickerUrl]);
     localStorage.setItem("cartItems", JSON.stringify($cartItemsStore));
     isCartDrawerOpen = true;
@@ -73,9 +78,9 @@
 
   <HistoryDrawer bind:isHistoryDrawerOpen />
 
-  <input type="text" placeholder="Enter a prompt..." bind:value={prompt} />
+  <input type="text" placeholder="Enter a prompt..." bind:value={prompt} required />
 
-  <button on:click={generateSticker}>Generate Sticker</button>
+  <button on:click={generateSticker(prompt)}>Generate Sticker</button>
 
   <button on:click={addToCart}>Add to Cart</button>
 
