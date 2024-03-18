@@ -23,7 +23,7 @@ export async function saveImageToStorage(imageUrl, prompt) {
 }
 
 async function saveImageUrlToFirestore(imageUrl, prompt) {
-  const imageRef = collection(db, "generatedStickers");
+  const imageRef = collection(db, "stickers");
   try {
     await addDoc(imageRef, {
       url: imageUrl,
@@ -38,16 +38,17 @@ async function saveImageUrlToFirestore(imageUrl, prompt) {
 }
 
 export async function getTopTenStickers(userUid) {
-  const stickersRef = collection(db, "generatedStickers");
-  const stickerQuery = query(stickersRef, where("creator", "==", userUid), orderBy("timestamp", "desc"), limit(10));
+  const stickersRef = collection(db, "stickers");
+  const stickerQuery = query(stickersRef, where("creator", "==", userUid), orderBy("timestamp", "desc"), limit(5));
   const snapshot = await getDocs(stickerQuery);
 
-  let stickerUrl = "";
+  let stickerUri = "";
   let storageUrl = "";
   let cloudStickerHistory = [];
   snapshot.forEach((doc) => {
-    stickerUrl = doc.data().url;
-    storageUrl = "https://sticker-factory-411909.appspot.com.storage.googleapis.com/" + stickerUrl;
+    console.log(doc.data().uri);
+    stickerUri = doc.data().uri;
+    storageUrl = "https://sticker-factory-411909.appspot.com.storage.googleapis.com/" + stickerUri;
     cloudStickerHistory.push(storageUrl);
   });
 
