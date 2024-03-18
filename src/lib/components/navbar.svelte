@@ -20,7 +20,7 @@
   };
 </script>
 
-<ul>
+<ul id="navbar">
   <li><a href="/">Landing Page</a></li>
   <li><a href="/protected/prompt">Prompt Page</a></li>
   <li><a href="/protected/orders">Orders Page</a></li>
@@ -28,3 +28,11 @@
     <a on:click|preventDefault={handleLogout} href="/signout">Sign Out</a>
   </li>
 </ul>
+
+<style>
+  #navbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+</style>
